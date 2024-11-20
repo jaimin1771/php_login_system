@@ -1,5 +1,5 @@
 <?php
-// Include database connection file (make sure this is correct path)
+// Include database connection file
 include "connection.php";
 
 // Check if the form is submitted
@@ -8,12 +8,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $full_name = $_POST['full_name'];
     $username = $_POST['username'];
     $email = $_POST['email'];
-    $phone = $_POST['phone'];
+    $country_code = $_POST['country_code']; // Country code
+    $phone_number = $_POST['phone']; // Phone number
     $password = $_POST['password'];
 
+    // Combine country code and phone number
+    $phone = $country_code . $phone_number;
 
-
-    // Validate and sanitize inputs (basic example)
+    // Validate and sanitize inputs
     $full_name = htmlspecialchars($full_name);
     $username = htmlspecialchars($username);
     $email = filter_var($email, FILTER_SANITIZE_EMAIL);
@@ -30,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: ../index.php");
         exit(); // Always call exit() after header() to stop script execution
     } else {
-        // If there was an error with the database, handle it here (optional)
+        // If there was an error with the database, handle it here
         echo "Error: " . mysqli_error($conn);
     }
 }
