@@ -11,6 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone = $_POST['phone'];
     $password = $_POST['password'];
 
+
+
     // Validate and sanitize inputs (basic example)
     $full_name = htmlspecialchars($full_name);
     $username = htmlspecialchars($username);
