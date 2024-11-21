@@ -1,195 +1,252 @@
-<?php
-include "php/registrasion.php";
-?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration Form</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body class="bg-gray-100 font-sans leading-normal tracking-normal text-gray-800 flex items-center justify-center min-h-screen">
     <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
         <h2 class="text-2xl font-bold mb-6 text-center">Create an Account</h2>
+        <form id="registrationForm" method="POST" action="php/registrasion.php" novalidate>
+            <!-- Success Message -->
+            <div id="successMessage" class="hidden bg-green-100 text-green-500 p-2 rounded mb-4"></div>
 
-        <!-- Error/Success Message Display -->
-        <div id="responseMessage" class="hidden text-center mb-4 p-2 rounded"></div>
-
-        <form id="registrationForm" method="POST" novalidate>
             <!-- Full Name -->
             <div class="mb-4">
-                <input type="text" placeholder="Full Name" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                    name="full_name" id="full_name">
-                <p class="text-red-500 text-sm mt-1 hidden" id="full_name_error"></p>
+                <input type="text" placeholder="Full Name" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" name="full_name" id="full_name">
+                <p class="text-red-500 text-sm mt-1 hidden" id="Username_err"></p>
             </div>
+
             <!-- Username -->
             <div class="mb-4">
-                <input type="text" placeholder="Username" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                    name="username" id="username">
+                <input type="text" placeholder="Username" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" name="username" id="username">
                 <p class="text-red-500 text-sm mt-1 hidden" id="username_error"></p>
             </div>
+
             <!-- Email -->
             <div class="mb-4">
-                <input type="email" placeholder="Email" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                    name="email" id="email">
+                <input type="email" placeholder="Email" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" name="email" id="email">
                 <p class="text-red-500 text-sm mt-1 hidden" id="email_error"></p>
             </div>
 
-            <!-- Phone Number and Country Code -->
-            <div class="mb-4 flex items-center">
-                <select name="country_code" id="country_code" class="w-1/4 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+            <!-- Phone -->
+            <div class="mb-4 flex items-center gap-2">
+                <select name="country_code" id="country_code" class="px-2 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
                     <option value="+1">+1</option>
                     <option value="+44">+44</option>
                     <option value="+91">+91</option>
-                    <!-- Add more country codes as needed -->
                 </select>
-                <input type="text" placeholder="Phone Number" name="phone_number" id="phone_number"
-                    class="w-3/4 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                <input type="text" placeholder="Phone Number" name="phone_number" id="phone_number" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
             </div>
             <p class="text-red-500 text-sm mt-1 hidden" id="phone_error"></p>
 
             <!-- Password -->
             <div class="mb-4">
-                <input type="password" placeholder="Password" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                    name="password" id="password">
+                <input type="password" placeholder="Password" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" name="password" id="password">
                 <p class="text-red-500 text-sm mt-1 hidden" id="password_error"></p>
             </div>
+
             <!-- Confirm Password -->
-            <div class="mb-6">
-                <input type="password" placeholder="Confirm Password" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                    id="confirm_password">
+            <div class="mb-4">
+                <input type="password" placeholder="Confirm Password" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" name="confirm_password" id="confirm_password">
                 <p class="text-red-500 text-sm mt-1 hidden" id="confirm_password_error"></p>
             </div>
-            <!-- Register Button -->
-            <button type="submit" id="submitBtn" class="w-full bg-blue-500 text-white py-2 rounded font-semibold hover:bg-blue-600 transition duration-300" disabled>Register</button>
-        </form>
 
-        <!-- Link to Login -->
-        <p class="text-center text-sm text-gray-600 mt-4">
-            Already have an account?
-            <a href="index.php" class="text-blue-500 font-semibold hover:underline">Login here</a>
-        </p>
+            <button type="submit" id="submitBtn" class="w-full bg-blue-500 text-white py-2 rounded font-semibold hover:bg-blue-600 transition duration-300">Register</button>
+        </form>
     </div>
 
     <script>
-        // Real-time validation
-        document.getElementById("registrationForm").addEventListener("input", validateFields);
-        document.getElementById("registrationForm").addEventListener("submit", function(event) {
-            event.preventDefault();
-            const formData = new FormData(this);
+        $(document).ready(function() {
+            // Live validation on input change
+            $("#username").on("keyup", function() {
+                validateUsername();
+            });
 
-            fetch("php/registrasion.php", {
-                    method: "POST",
-                    body: formData,
-                })
-                .then((response) => response.json())
-                .then((data) => {
-                    const responseMessage = document.getElementById("responseMessage");
-                    if (data.status === "error") {
-                        responseMessage.textContent = data.message;
-                        responseMessage.className = "text-red-500 p-2 rounded bg-red-100";
-                    } else if (data.status === "success") {
-                        responseMessage.textContent = data.message;
-                        responseMessage.className = "text-green-500 p-2 rounded bg-green-100";
-                        setTimeout(() => {
-                            window.location.href = "index.php";
-                        }, 2000);
-                    }
-                    responseMessage.classList.remove("hidden");
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                });
+            // Form submission with AJAX
+            $("#registrationForm").submit(function(e) {
+                e.preventDefault();
+                validateFields();
+
+                if (!$(".text-red-500:not(.hidden)").length) {
+                    const formData = $(this).serialize();
+                    $.ajax({
+                        type: "POST",
+                        url: "php/registrasion.php",
+                        data: formData,
+                        success: function(response) {
+                            const data = JSON.parse(response);
+                            if (data.status === "success") {
+                                $("#successMessage").text(data.message).removeClass("hidden");
+                                $("#registrationForm")[0].reset();
+                            } else {
+                                $(`#${data.field}_error`).text(data.message).removeClass("hidden");
+                            }
+                        }
+                    });
+                }
+            });
         });
 
-        // Validation logic
-        function validateFields() {
-            let isFormValid = true;
-
-            // Full Name Validation
-            const fullName = document.getElementById("full_name").value.trim();
-            const fullNameError = document.getElementById("full_name_error");
-            if (!fullName) {
-                fullNameError.textContent = "Full name is required.";
-                fullNameError.classList.remove("hidden");
-                isFormValid = false;
-            } else {
-                fullNameError.textContent = "";
-                fullNameError.classList.add("hidden");
-            }
-
-            // Username Validation
-            const username = document.getElementById("username").value.trim();
-            const usernameError = document.getElementById("username_error");
+        function validateUsername() {
+            const username = $("#username").val().trim();
             if (!username) {
-                usernameError.textContent = "Username is required.";
-                usernameError.classList.remove("hidden");
-                isFormValid = false;
+                $("#username_error").text("Username is required.").removeClass("hidden");
             } else {
-                usernameError.textContent = "";
-                usernameError.classList.add("hidden");
+                $("#username_error").addClass("hidden");
+                $.ajax({
+                    type: "POST",
+                    url: "php/registrasion.php",
+                    data: {
+                        check_username: username
+                    },
+                    success: function(response) {
+                        const data = JSON.parse(response);
+                        if (data.status === "error") {
+                            $("#username_error").text(data.message).removeClass("hidden");
+                        } else {
+                            $("#username_error").addClass("hidden");
+                        }
+                    },
+                });
             }
-
-            // Email Validation
-            const email = document.getElementById("email").value.trim();
-            const emailError = document.getElementById("email_error");
-            if (!email || !validateEmail(email)) {
-                emailError.textContent = "Please enter a valid email.";
-                emailError.classList.remove("hidden");
-                isFormValid = false;
-            } else {
-                emailError.textContent = "";
-                emailError.classList.add("hidden");
-            }
-
-            // Phone Number Validation
-            const phoneNumber = document.getElementById("phone_number").value.trim();
-            const phoneError = document.getElementById("phone_error");
-            if (!phoneNumber) {
-                phoneError.textContent = "Phone number is required.";
-                phoneError.classList.remove("hidden");
-                isFormValid = false;
-            } else {
-                phoneError.textContent = "";
-                phoneError.classList.add("hidden");
-            }
-
-            // Password Validation
-            const password = document.getElementById("password").value.trim();
-            const passwordError = document.getElementById("password_error");
-            if (!password) {
-                passwordError.textContent = "Password is required.";
-                passwordError.classList.remove("hidden");
-                isFormValid = false;
-            } else {
-                passwordError.textContent = "";
-                passwordError.classList.add("hidden");
-            }
-
-            // Confirm Password Validation
-            const confirmPassword = document.getElementById("confirm_password").value.trim();
-            const confirmPasswordError = document.getElementById("confirm_password_error");
-            if (password !== confirmPassword) {
-                confirmPasswordError.textContent = "Passwords do not match.";
-                confirmPasswordError.classList.remove("hidden");
-                isFormValid = false;
-            } else {
-                confirmPasswordError.textContent = "";
-                confirmPasswordError.classList.add("hidden");
-            }
-
-            // Enable or disable the submit button
-            document.getElementById("submitBtn").disabled = !isFormValid;
         }
 
-        // Email format validation
-        function validateEmail(email) {
-            const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-            return re.test(email);
+        function validateFields() {
+            validateUsername();
+        }
+
+
+        $(document).ready(function() {
+            // Live validation on input change
+            $("#username").on("keyup", function() {
+                validateUsername();
+            });
+            $("#email").on("keyup", function() {
+                validateEmail();
+            });
+            $("#phone_number").on("keyup", function() {
+                validatePhone();
+            });
+            $("#password").on("keyup", function() {
+                validatePassword();
+            });
+            $("#confirm_password").on("keyup", function() {
+                validateConfirmPassword();
+            });
+            $("#full_name").on("keyup", function() {
+                validateFullName(); // Live validation for full name
+            });
+
+            $("#registrationForm").submit(function(e) {
+                e.preventDefault();
+                validateFields();
+
+                if (!$(".text-red-500:not(.hidden)").length) {
+                    const formData = $(this).serialize();
+                    $.ajax({
+                        type: "POST",
+                        url: "php/registrasion.php",
+                        data: formData,
+                        success: function(response) {
+                            const data = JSON.parse(response);
+                            if (data.status === 'success') {
+                                $("#successMessage").text(data.message).removeClass("hidden");
+                                $("#registrationForm")[0].reset();
+                            } else {
+                                $(`#${data.field}_error`).text(data.message).removeClass("hidden");
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        // New function to validate Full Name
+        function validateFullName() {
+            const fullName = $("#full_name").val().trim();
+            if (!fullName) {
+                $("#Username_err").text("Full Name is required.").removeClass("hidden");
+            } else if (fullName.split(" ").length < 2) {
+                $("#Username_err").text("Full Name must contain both first and last name.").removeClass("hidden");
+            } else {
+                $("#Username_err").addClass("hidden");
+            }
+        }
+
+        function validateUsername() {
+            const username = $("#username").val().trim();
+            const usernameRegex = /^[a-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]+$/;
+            if (!username) {
+                $("#username_error").text("Username is required.").removeClass("hidden");
+            } else if (!usernameRegex.test(username)) {
+                $("#username_error").text("Username can not contain Capital letters and space.").removeClass("hidden");
+            } else {
+                $("#username_error").addClass("hidden");
+            }
+        }
+
+        function validateEmail() {
+            const email = $("#email").val().trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email) {
+                $("#email_error").text("Email is required.").removeClass("hidden");
+            } else if (!emailRegex.test(email)) {
+                $("#email_error").text("Enter a valid email address.").removeClass("hidden");
+            } else {
+                $("#email_error").addClass("hidden");
+            }
+        }
+
+        function validatePhone() {
+            const phone = $("#phone_number").val().trim();
+            if (!phone) {
+                $("#phone_error").text("Phone number is required.").removeClass("hidden");
+            } else if (!/^\d+$/.test(phone)) {
+                $("#phone_error").text("Phone number can only contain numbers.").removeClass("hidden");
+            } else {
+                $("#phone_error").addClass("hidden");
+            }
+        }
+
+        function validatePassword() {
+            const password = $("#password").val().trim();
+            const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{6,}$/;
+
+            if (!password) {
+                $("#password_error").text("Password is required.").removeClass("hidden");
+            } else if (!regex.test(password)) {
+                $("#password_error").text("Password must contain at least 1 uppercase letter, 1 number, 1 special character, and be at least 6 characters long.").removeClass("hidden");
+            } else {
+                $("#password_error").addClass("hidden");
+            }
+        }
+
+
+        function validateConfirmPassword() {
+            const password = $("#password").val().trim();
+            const confirmPassword = $("#confirm_password").val().trim();
+            if (!confirmPassword) {
+                $("#confirm_password_error").text("Confirm Password is required.").removeClass("hidden");
+            } else if (confirmPassword !== password) {
+                $("#confirm_password_error").text("Passwords do not match.").removeClass("hidden");
+            } else {
+                $("#confirm_password_error").addClass("hidden");
+            }
+        }
+
+        function validateFields() {
+            validateFullName(); // Validate Full Name
+            validateUsername();
+            validateEmail();
+            validatePhone();
+            validatePassword();
+            validateConfirmPassword();
         }
     </script>
 </body>
