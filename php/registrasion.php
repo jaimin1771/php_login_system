@@ -1,8 +1,7 @@
 <?php
-// Include database connection file
+session_start(); // Start the session
 include "connection.php";
 
-// Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Collect form data
     $full_name = $_POST['full_name'];
@@ -22,17 +21,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone = htmlspecialchars($phone);
     $password = password_hash($password, PASSWORD_BCRYPT); // Hash the password for security
 
-    // Prepare SQL query to insert the data into the database
-    $query = "INSERT INTO users (full_name, username, email, phone, password) VALUES ('$full_name', '$username', '$email', '$phone', '$password')";
-    $result = mysqli_query($conn, $query);
+    // Check if the username exists
+    $username_query = "SELECT * FROM users WHERE username = '$username' LIMIT 1";
+    $username_result = mysqli_query($conn, $username_query);
 
-    // Check if the data was inserted successfully
-    if ($result) {
-        // Redirect to index.php (login page)
-        header("Location: ../index.php");
-        exit(); // Always call exit() after header() to stop script execution
+    // Check if the email exists
+    $email_query = "SELECT * FROM users WHERE email = '$email' LIMIT 1";
+    $email_result = mysqli_query($conn, $email_query);
+
+    if (mysqli_num_rows($username_result) > 0 && mysqli_num_rows($email_result) > 0) {
+        // If both username and email exist
+        echo json_encode(['status' => 'error', 'message' => "Error: username or email already exists."]);
+    } elseif (mysqli_num_rows($username_result) > 0) {
+        // If only username exists
+        echo json_encode(['status' => 'error', 'message' => "Error: username already exists."]);
+    } elseif (mysqli_num_rows($email_result) > 0) {
+        // If only email exists
+        echo json_encode(['status' => 'error', 'message' => "Error: email already exists."]);
     } else {
-        // If there was an error with the database, handle it here
-        echo "Error: " . mysqli_error($conn);
+        // Prepare SQL query to insert the data into the database
+        $query = "INSERT INTO users (full_name, username, email, phone, password) VALUES ('$full_name', '$username', '$email', '$phone', '$password')";
+        $result = mysqli_query($conn, $query);
+
+        if ($result) {
+            // Send a success response
+            echo json_encode(['status' => 'success', 'message' => 'Registration successful!']);
+        } else {
+            // Send an error response for database failure
+            echo json_encode(['status' => 'error', 'message' => "Error: " . mysqli_error($conn)]);
+        }
     }
 }
