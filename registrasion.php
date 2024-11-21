@@ -1,3 +1,6 @@
+<?php
+include "php/registrasion.php";
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,41 +24,48 @@
             <div class="mb-4">
                 <input type="text" placeholder="Full Name" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                     name="full_name" id="full_name">
+                <p class="text-red-500 text-sm mt-1 hidden" id="full_name_error"></p>
             </div>
             <!-- Username -->
             <div class="mb-4">
                 <input type="text" placeholder="Username" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                     name="username" id="username">
+                <p class="text-red-500 text-sm mt-1 hidden" id="username_error"></p>
             </div>
             <!-- Email -->
             <div class="mb-4">
                 <input type="email" placeholder="Email" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                     name="email" id="email">
+                <p class="text-red-500 text-sm mt-1 hidden" id="email_error"></p>
             </div>
-            <!-- Country Code and Phone -->
-            <div class="mb-4">
-                <div class="flex items-center">
-                    <!-- Country Code Dropdown -->
-                    <select id="country_code" name="country_code" class="border border-gray-300 rounded-md p-2 mr-2">
-                        <option value="+91">+91</option>
-                        <option value="+1">+1</option>
-                        <option value="+44">+44</option>
-                    </select>
-                    <!-- Phone Input -->
-                    <input type="tel" placeholder="Phone" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                        name="phone" id="phone">
-                </div>
+
+            <!-- Phone Number and Country Code -->
+            <div class="mb-4 flex items-center">
+                <select name="country_code" id="country_code" class="w-1/4 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                    <option value="+1">+1</option>
+                    <option value="+44">+44</option>
+                    <option value="+91">+91</option>
+                    <!-- Add more country codes as needed -->
+                </select>
+                <input type="text" placeholder="Phone Number" name="phone_number" id="phone_number"
+                    class="w-3/4 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
             </div>
+            <p class="text-red-500 text-sm mt-1 hidden" id="phone_error"></p>
+
             <!-- Password -->
             <div class="mb-4">
-                <input type="password" placeholder="Password" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" name="password" id="password">
+                <input type="password" placeholder="Password" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    name="password" id="password">
+                <p class="text-red-500 text-sm mt-1 hidden" id="password_error"></p>
             </div>
             <!-- Confirm Password -->
             <div class="mb-6">
-                <input type="password" placeholder="Confirm Password" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" id="confirm_password">
+                <input type="password" placeholder="Confirm Password" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    id="confirm_password">
+                <p class="text-red-500 text-sm mt-1 hidden" id="confirm_password_error"></p>
             </div>
             <!-- Register Button -->
-            <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded font-semibold hover:bg-blue-600 transition duration-300">Register</button>
+            <button type="submit" id="submitBtn" class="w-full bg-blue-500 text-white py-2 rounded font-semibold hover:bg-blue-600 transition duration-300" disabled>Register</button>
         </form>
 
         <!-- Link to Login -->
@@ -66,13 +76,12 @@
     </div>
 
     <script>
+        // Real-time validation
+        document.getElementById("registrationForm").addEventListener("input", validateFields);
         document.getElementById("registrationForm").addEventListener("submit", function(event) {
-            event.preventDefault(); // Prevent default form submission
-
-            // Collect form data
+            event.preventDefault();
             const formData = new FormData(this);
 
-            // Send data via AJAX
             fetch("php/registrasion.php", {
                     method: "POST",
                     body: formData,
@@ -81,15 +90,13 @@
                 .then((data) => {
                     const responseMessage = document.getElementById("responseMessage");
                     if (data.status === "error") {
-                        // Show error message
                         responseMessage.textContent = data.message;
                         responseMessage.className = "text-red-500 p-2 rounded bg-red-100";
                     } else if (data.status === "success") {
-                        // Show success message and redirect to login
                         responseMessage.textContent = data.message;
                         responseMessage.className = "text-green-500 p-2 rounded bg-green-100";
                         setTimeout(() => {
-                            window.location.href = "index.php"; // Redirect to login page
+                            window.location.href = "index.php";
                         }, 2000);
                     }
                     responseMessage.classList.remove("hidden");
@@ -98,6 +105,92 @@
                     console.error("Error:", error);
                 });
         });
+
+        // Validation logic
+        function validateFields() {
+            let isFormValid = true;
+
+            // Full Name Validation
+            const fullName = document.getElementById("full_name").value.trim();
+            const fullNameError = document.getElementById("full_name_error");
+            if (!fullName) {
+                fullNameError.textContent = "Full name is required.";
+                fullNameError.classList.remove("hidden");
+                isFormValid = false;
+            } else {
+                fullNameError.textContent = "";
+                fullNameError.classList.add("hidden");
+            }
+
+            // Username Validation
+            const username = document.getElementById("username").value.trim();
+            const usernameError = document.getElementById("username_error");
+            if (!username) {
+                usernameError.textContent = "Username is required.";
+                usernameError.classList.remove("hidden");
+                isFormValid = false;
+            } else {
+                usernameError.textContent = "";
+                usernameError.classList.add("hidden");
+            }
+
+            // Email Validation
+            const email = document.getElementById("email").value.trim();
+            const emailError = document.getElementById("email_error");
+            if (!email || !validateEmail(email)) {
+                emailError.textContent = "Please enter a valid email.";
+                emailError.classList.remove("hidden");
+                isFormValid = false;
+            } else {
+                emailError.textContent = "";
+                emailError.classList.add("hidden");
+            }
+
+            // Phone Number Validation
+            const phoneNumber = document.getElementById("phone_number").value.trim();
+            const phoneError = document.getElementById("phone_error");
+            if (!phoneNumber) {
+                phoneError.textContent = "Phone number is required.";
+                phoneError.classList.remove("hidden");
+                isFormValid = false;
+            } else {
+                phoneError.textContent = "";
+                phoneError.classList.add("hidden");
+            }
+
+            // Password Validation
+            const password = document.getElementById("password").value.trim();
+            const passwordError = document.getElementById("password_error");
+            if (!password) {
+                passwordError.textContent = "Password is required.";
+                passwordError.classList.remove("hidden");
+                isFormValid = false;
+            } else {
+                passwordError.textContent = "";
+                passwordError.classList.add("hidden");
+            }
+
+            // Confirm Password Validation
+            const confirmPassword = document.getElementById("confirm_password").value.trim();
+            const confirmPasswordError = document.getElementById("confirm_password_error");
+            if (password !== confirmPassword) {
+                confirmPasswordError.textContent = "Passwords do not match.";
+                confirmPasswordError.classList.remove("hidden");
+                isFormValid = false;
+            } else {
+                confirmPasswordError.textContent = "";
+                confirmPasswordError.classList.add("hidden");
+            }
+
+            // Enable or disable the submit button
+            document.getElementById("submitBtn").disabled = !isFormValid;
+        }
+
+        // Email format validation
+        function validateEmail(email) {
+            const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            return re.test(email);
+        }
     </script>
 </body>
 

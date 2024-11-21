@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $email = $_POST['email'];
     $country_code = $_POST['country_code']; // Country code
-    $phone_number = $_POST['phone']; // Phone number
+    $phone_number = $_POST['phone_number']; // Phone number (fixed the name)
     $password = $_POST['password'];
 
     // Combine country code and phone number
