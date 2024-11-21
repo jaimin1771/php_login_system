@@ -1,36 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
+<?php
+include "connection.php"; // Include your database connection
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Form</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
+// Check if username exists (AJAX request)
+if (isset($_POST['check_username'])) {
+    $username = strtolower(trim($_POST['check_username'])); // Convert to lowercase
 
-<body class="bg-gray-100 font-sans leading-normal tracking-normal text-gray-800 flex items-center justify-center min-h-screen">
-    <div class="max-w-md w-full bg-white rounded-lg shadow-md p-8">
-        <h2 class="text-2xl font-semibold text-center text-gray-700 mb-4">Login</h2>
-        <form>
-            <div class="mb-4">
-                <input type="text" placeholder="Username or Email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-            </div>
-            <div class="mb-6">
-                <input type="password" placeholder="Password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-            </div>
-            <div class="flex items-center justify-between mb-6">
-                <a href="#" class="text-sm text-blue-500 hover:underline">Forgot Password?</a>
-            </div>
-            <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300">Login</button>
-        </form>
-        <div class="text-center mt-6">
-            <p class="text-sm text-gray-600">
-                Don't have an account?
-                <a href="registrasion.php" class="text-blue-500 hover:underline">Register here</a>
-            </p>
-        </div>
-    </div>
-</body>
+    $query = "SELECT * FROM users WHERE username = '$username' LIMIT 1";
+    $result = mysqli_query($conn, $query);
 
-</html>
+    if (mysqli_num_rows($result) > 0) {
+        echo json_encode(['status' => 'error', 'message' => 'Username already exists.']);
+    } else {
+        echo json_encode(['status' => 'success', 'message' => 'Username is available.']);
+    }
+    exit;
+}
+
+// Registration logic
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['full_name'])) {
+    $full_name = $_POST['full_name'];
+    $username = strtolower(trim($_POST['username']));
+    $email = trim($_POST['email']);
+    $phone_number = $_POST['phone'];
+    $password = password_hash($_POST['password'], PASSWORD_BCRYPT); // Encrypt the password
+
+    // Check if the username or email already exists
+    $query = "SELECT * FROM users WHERE username = '$username' OR email = '$email'";
+    $result = mysqli_query($conn, $query);
+
+    if (mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+
+        if ($row['username'] === $username) {
+            echo json_encode(['status' => 'error', 'field' => 'username', 'message' => 'Username already exists.']);
+        } elseif ($row['email'] === $email) {
+            echo json_encode(['status' => 'error', 'field' => 'email', 'message' => 'Email already exists.']);
+        }
+    } else {
+        // Insert the new user into the database
+        $insert = "INSERT INTO users (full_name, username, email,  phone, password) 
+                   VALUES ('$full_name', '$username', '$email',  '$phone_number', '$password')";
+        if (mysqli_query($conn, $insert)) {
+            echo json_encode(['status' => 'success', 'message' => 'Registration successful!']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Registration failed. Please try again.']);
+        }
+    }
+    exit;
+}

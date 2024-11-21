@@ -1,5 +1,5 @@
 <?php
-include "connection.php"; // Ensure your database connection is included
+include "connection.php"; // Include your database connection
 
 // Check if username exists (AJAX request)
 if (isset($_POST['check_username'])) {
@@ -9,20 +9,19 @@ if (isset($_POST['check_username'])) {
     $result = mysqli_query($conn, $query);
 
     if (mysqli_num_rows($result) > 0) {
-        echo json_encode(['status' => 'success', 'message' => 'Username found.']);
+        echo json_encode(['status' => 'error', 'message' => 'Username already exists.']);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'User not found.']);
+        echo json_encode(['status' => 'success', 'message' => 'Username is available.']);
     }
     exit;
 }
 
 // Registration logic
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['full_name'])) {
     $full_name = $_POST['full_name'];
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    $country_code = $_POST['country_code'];
-    $phone_number = $_POST['phone_number'];
+    $username = strtolower(trim($_POST['username']));
+    $email = trim($_POST['email']);
+    $phone = $_POST['phone'];
     $password = password_hash($_POST['password'], PASSWORD_BCRYPT); // Encrypt the password
 
     // Check if the username or email already exists
@@ -30,14 +29,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = mysqli_query($conn, $query);
 
     if (mysqli_num_rows($result) > 0) {
-        echo json_encode(['status' => 'error', 'field' => 'username', 'message' => 'Username or email already exists.']);
+        $row = mysqli_fetch_assoc($result);
+
+        if ($row['username'] === $username) {
+            echo json_encode(['status' => 'error', 'field' => 'username', 'message' => 'Username already exists.']);
+        } elseif ($row['email'] === $email) {
+            echo json_encode(['status' => 'error', 'field' => 'email', 'message' => 'Email already exists.']);
+        }
+        exit;
     } else {
         // Insert the new user into the database
-        $insert = "INSERT INTO users (full_name, username, email, country_code, phone_number, password) VALUES ('$full_name', '$username', '$email', '$country_code', '$phone_number', '$password')";
+        $insert = "INSERT INTO users (full_name, username, email, phone, password) 
+                   VALUES ('$full_name', '$username', '$email', '$phone', '$password')";
         if (mysqli_query($conn, $insert)) {
-            echo json_encode(['status' => 'success', 'message' => 'Registration successful!']);
+            header('Location: ../registrasion.php');
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Registration failed. Please try again.']);
         }
     }
+    exit;
 }

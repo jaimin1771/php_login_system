@@ -41,7 +41,7 @@
                     <option value="+44">+44</option>
                     <option value="+91">+91</option>
                 </select>
-                <input type="text" placeholder="Phone Number" name="phone_number" id="phone_number" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                <input type="text" placeholder="Phone Number" name="phone" id="phone" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
             </div>
             <p class="text-red-500 text-sm mt-1 hidden" id="phone_error"></p>
 
@@ -62,33 +62,48 @@
     </div>
 
     <script>
-        $(document).ready(function() {
-            // Live validation on input change
-            $("#username").on("keyup", function() {
-                validateUsername();
-            });
-
-            // Form submission with AJAX
-            $("#registrationForm").submit(function(e) {
-                e.preventDefault();
-                validateFields();
-
-                if (!$(".text-red-500:not(.hidden)").length) {
-                    const formData = $(this).serialize();
-                    $.ajax({
-                        type: "POST",
-                        url: "php/registrasion.php",
-                        data: formData,
-                        success: function(response) {
-                            const data = JSON.parse(response);
-                            if (data.status === "success") {
-                                $("#successMessage").text(data.message).removeClass("hidden");
-                                $("#registrationForm")[0].reset();
-                            } else {
-                                $(`#${data.field}_error`).text(data.message).removeClass("hidden");
-                            }
+        // Check username availability via AJAX
+        $('#username').on('blur', function() {
+            var username = $(this).val().trim();
+            if (username.length > 0) {
+                $.ajax({
+                    type: 'POST',
+                    url: 'your-php-script.php',
+                    data: {
+                        check_username: username
+                    },
+                    success: function(response) {
+                        var data = JSON.parse(response);
+                        if (data.status === 'error') {
+                            $('#username-status').text(data.message);
+                        } else {
+                            $('#username-status').text(data.message).removeClass('text-red-500').addClass('text-green-500');
                         }
-                    });
+                    }
+                });
+            }
+        });
+
+        // Handle form submission via AJAX
+        $('#registration-form').on('submit', function(e) {
+            e.preventDefault(); // Prevent default form submission
+
+            var formData = $(this).serialize();
+
+            // Disable the submit button to prevent multiple submissions
+            $('#submit-button').prop('disabled', true);
+
+            $.ajax({
+                type: 'POST',
+                url: 'your-php-script.php',
+                data: formData,
+                success: function(response) {
+                    var data = JSON.parse(response);
+                    alert(data.message);
+                    if (data.status === 'success') {
+                        $('#registration-form')[0].reset();
+                    }
+                    $('#submit-button').prop('disabled', false); // Enable the submit button after submission
                 }
             });
         });
@@ -130,7 +145,7 @@
             $("#email").on("keyup", function() {
                 validateEmail();
             });
-            $("#phone_number").on("keyup", function() {
+            $("#phone").on("keyup", function() {
                 validatePhone();
             });
             $("#password").on("keyup", function() {
@@ -204,7 +219,7 @@
         }
 
         function validatePhone() {
-            const phone = $("#phone_number").val().trim();
+            const phone = $("#phone").val().trim();
             if (!phone) {
                 $("#phone_error").text("Phone number is required.").removeClass("hidden");
             } else if (!/^\d+$/.test(phone)) {
@@ -248,6 +263,30 @@
             validatePassword();
             validateConfirmPassword();
         }
+        // Assuming you are using jQuery for AJAX
+        $('#registration_form').submit(function(event) {
+            event.preventDefault();
+
+            $.ajax({
+                url: 'register.php', // Your PHP file handling registration
+                type: 'POST',
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        alert(response.message); // Show the success message
+                        if (response.redirect) {
+                            window.location.href = response.redirect; // Redirect to index.php
+                        }
+                    } else {
+                        alert(response.message); // Show error message
+                    }
+                },
+                error: function() {
+                    alert('An error occurred, please try again.');
+                }
+            });
+        });
     </script>
 </body>
 
