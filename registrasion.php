@@ -35,15 +35,17 @@
             </div>
 
             <!-- Phone -->
-            <div class="mb-4 flex items-center gap-2">
-                <select name="country_code" id="country_code" class="px-2 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-                    <option value="+1">+1</option>
-                    <option value="+44">+44</option>
-                    <option value="+91">+91</option>
-                </select>
-                <input type="text" placeholder="Phone Number" name="phone" id="phone" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+            <div class="mb-4">
+                <div class="flex items-center gap-2">
+                    <select name="country_code" id="country_code" class="px-2 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                        <option value="+1">+1</option>
+                        <option value="+44">+44</option>
+                        <option value="+91">+91</option>
+                    </select>
+                    <input type="text" placeholder="Phone Number" name="phone" id="phone" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                </div>
+                <p class="text-red-500 text-sm mt-1 hidden" id="phone_error"></p>
             </div>
-            <p class="text-red-500 text-sm mt-1 hidden" id="phone_error"></p>
 
             <!-- Password -->
             <div class="mb-4">

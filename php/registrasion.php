@@ -42,7 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['full_name'])) {
         $insert = "INSERT INTO users (full_name, username, email, phone, password) 
                    VALUES ('$full_name', '$username', '$email', '$phone', '$password')";
         if (mysqli_query($conn, $insert)) {
-            header('Location: ../registrasion.php');
+            // Redirect after successful registration
+            header('Location: ../index.php');
+            exit;  // Don't forget to exit after header redirect to stop script execution
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Registration failed. Please try again.']);
         }
