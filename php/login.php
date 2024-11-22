@@ -1,23 +1,55 @@
 <?php
-session_start();
+// Start the session only if it hasn't been started yet
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 include "connection.php";
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username_email']) && isset($_POST['password'])) {
-    $username_email = $_POST['username_email'];
+
+header('Content-Type: application/json');
+
+// Check if the user is already logged in
+if (isset($_SESSION['id'])) {
+    echo json_encode(['status' => 'success', 'message' => 'Already logged in']);
+    exit;
+}
+
+// Process login
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_POST['email']) || !isset($_POST['password'])) {
+        echo json_encode(['status' => 'error', 'message' => 'Email and password are required']);
+        exit;
+    }
+
+    $emailOrUsername = trim($_POST['email']);
     $password = $_POST['password'];
 
-    // Check if the username/email exists
-    $query = "SELECT * FROM users WHERE username = '$username_email' OR email = '$username_email'";
-    $result = mysqli_query($conn, $query);
-    $user = mysqli_fetch_assoc($result);
+    $query = "SELECT id, full_name, username, email, password FROM users WHERE username = ? OR email = ?";
+    if ($stmt = $conn->prepare($query)) {
+        $stmt->bind_param("ss", $emailOrUsername, $emailOrUsername);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    if ($user && password_verify($password, $user['password'])) {
-        // Successful login, store user id in session
-        $_SESSION['user_id'] = $user['id'];  // Assuming 'id' is the primary key of the user
+        if ($user = $result->fetch_assoc()) {
+            if (password_verify($password, $user['password'])) {
+                $_SESSION['id'] = $user['id'];
+                $_SESSION['full_name'] = $user['full_name'];
+                echo json_encode(['status' => 'success', 'message' => 'Login successful']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Invalid username/email or password']);
+            }
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'User not found']);
+        }
 
-        echo json_encode(['status' => 'success', 'message' => 'Login successful']);
+        $stmt->close();
     } else {
-        // Invalid credentials
-        echo json_encode(['status' => 'error', 'message' => 'Invalid username/email or password']);
+        echo json_encode(['status' => 'error', 'message' => 'Database error']);
     }
+
+    $conn->close();
+    exit;
+} else {
+    echo json_encode(['status' => 'error', 'message' => 'Invalid request']);
     exit;
 }

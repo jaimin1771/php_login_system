@@ -1,6 +1,8 @@
 <?php
-// Start session (if using session variables)
-session_start();
+
+
+// Assign user name or default to "Guest"
+$full_name = isset($_SESSION['full_name']) ? htmlspecialchars($_SESSION['full_name']) : 'Guest';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -36,16 +38,23 @@ session_start();
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
-                <span class="text-2xl font-semibold">MyDashboard</span>
+                <span class="text-2xl font-semibold"></span>
 
                 <!-- Profile Dropdown -->
                 <div class="relative group">
                     <button class="flex items-center space-x-2">
                         <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full border-2 border-white">
                         <span class="hidden md:inline font-semibold">
-                            <?php echo isset($_SESSION['user_name']) ? htmlspecialchars($_SESSION['user_name']) : 'Guest'; ?>
+                            <?php echo $full_name; ?>
                         </span>
                     </button>
+                    <!-- Dropdown Menu -->
+                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg text-gray-800 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <a href="profile.php" class="block px-4 py-2 hover:bg-gray-200">Profile</a>
+                        <form method="POST" action="logout.php" class="block">
+                            <button type="submit" class="w-full text-left px-4 py-2 hover:bg-gray-200">Logout</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </nav>
