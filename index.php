@@ -1,25 +1,5 @@
 <?php
-include "php/connection.php"; // Include your database connection
-
-// Login logic
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username_email']) && isset($_POST['password'])) {
-    $username_email = $_POST['username_email'];
-    $password = $_POST['password'];
-
-    // Check if the username/email exists
-    $query = "SELECT * FROM users WHERE username = '$username_email' OR email = '$username_email'";
-    $result = mysqli_query($conn, $query);
-    $user = mysqli_fetch_assoc($result);
-
-    if ($user && password_verify($password, $user['password'])) {
-        // Successful login
-        echo json_encode(['status' => 'success', 'message' => 'Login successful']);
-    } else {
-        // Invalid credentials
-        echo json_encode(['status' => 'error', 'message' => 'Invalid username/email or password']);
-    }
-    exit;
-}
+include "php/login.php"; // Include your connection
 ?>
 
 <!DOCTYPE html>
@@ -116,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username_email']) && 
                     success: function(response) {
                         var res = JSON.parse(response);
                         if (res.status === 'success') {
-                            window.location.href = 'dashboard.php'; // Redirect to dashboard
+                            window.location.href = 'dashboard/dashboard.php'; // Redirect to dashboard
                         } else {
                             alert(res.message); // Show error message
                         }
