@@ -44,7 +44,7 @@ if (isset($_SESSION['id'])) {
                 </div>
                 <div class="mt-2 text-center">
                     <p class="text-sm text-gray-600">Don't have an account?
-                        <a href="registration.php" class="text-blue-600 hover:underline">Register here</a>
+                        <a href="registrasion.php" class="text-blue-600 hover:underline">Register here</a>
                     </p>
                 </div>
             </form>

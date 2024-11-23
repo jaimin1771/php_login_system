@@ -1,8 +1,40 @@
 <?php
+// Start session only if it hasn't been started already
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
+// Debug: Set session variables for testing purposes
+// Uncomment the lines below to test with different roles
+// $_SESSION['role'] = 'admin'; // Set to 'admin', 'user', or leave unset for 'guest'
+// $_SESSION['full_name'] = 'John Doe';
 
-// Assign user name or default to "Guest"
+// Assign full name or default to "Guest"
 $full_name = isset($_SESSION['full_name']) ? htmlspecialchars($_SESSION['full_name']) : 'Guest';
+
+// Assign user role or default to "guest"
+$user_role = isset($_SESSION['role']) ? $_SESSION['role'] : 'guest';
+
+// Define menu items for roles
+$menu_items = [
+    'admin' => [
+        'Home' => 'home.php',
+        'Recent Activities' => 'recent-activities.php',
+        'Upcoming Events' => 'upcoming-events.php',
+        'Settings' => 'settings.php',
+        'Contact' => 'contact.php',
+    ],
+    'user' => [
+        'Home' => 'home.php',
+        'Settings' => 'settings.php',
+    ],
+    'guest' => [
+        'Home' => 'home.php',
+    ],
+];
+
+// Get the menu for the current role
+$role_menu = isset($menu_items[$user_role]) ? $menu_items[$user_role] : $menu_items['guest'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -10,7 +42,7 @@ $full_name = isset($_SESSION['full_name']) ? htmlspecialchars($_SESSION['full_na
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Layout</title>
+    <title>Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -20,11 +52,11 @@ $full_name = isset($_SESSION['full_name']) ? htmlspecialchars($_SESSION['full_na
     <div id="sidebar" class="w-64 bg-gradient-to-b from-indigo-800 via-indigo-700 to-indigo-600 h-screen shadow-lg p-6 hidden md:flex flex-col">
         <h1 class="text-3xl font-semibold text-white mb-8">Dashboard</h1>
         <nav class="space-y-4">
-            <a href="home.php" class="block text-gray-300 hover:text-white hover:bg-indigo-800 rounded-lg px-4 py-2">Home</a>
-            <a href="recent-activities.php" class="block text-gray-300 hover:text-white hover:bg-indigo-800 rounded-lg px-4 py-2">Recent Activities</a>
-            <a href="upcoming-events.php" class="block text-gray-300 hover:text-white hover:bg-indigo-800 rounded-lg px-4 py-2">Upcoming Events</a>
-            <a href="settings.php" class="block text-gray-300 hover:text-white hover:bg-indigo-800 rounded-lg px-4 py-2">Settings</a>
-            <a href="contact.php" class="block text-gray-300 hover:text-white hover:bg-indigo-800 rounded-lg px-4 py-2">Contact</a>
+            <?php foreach ($role_menu as $label => $link) : ?>
+                <a href="<?php echo $link; ?>" class="block text-gray-300 hover:text-white hover:bg-indigo-800 rounded-lg px-4 py-2">
+                    <?php echo $label; ?>
+                </a>
+            <?php endforeach; ?>
         </nav>
     </div>
 
@@ -38,7 +70,7 @@ $full_name = isset($_SESSION['full_name']) ? htmlspecialchars($_SESSION['full_na
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
-                <span class="text-2xl font-semibold"></span>
+                <span class="text-2xl font-semibold">Welcome</span>
 
                 <!-- Profile Dropdown -->
                 <div class="relative group">
@@ -61,14 +93,11 @@ $full_name = isset($_SESSION['full_name']) ? htmlspecialchars($_SESSION['full_na
 
         <!-- Page Content -->
         <div class="p-6 md:p-10 flex-1">
-            <?php
-            // Include the page content
-            if (isset($page_content)) {
-                include $page_content;
-            }
-            ?>
+            <h1 class='text-2xl font-bold'>Welcome, <?php echo $full_name; ?>!</h1>
+            <p>Your role is <strong><?php echo ucfirst($user_role); ?></strong>.</p>
         </div>
     </div>
 </body>
 
 </html>
+ 
