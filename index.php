@@ -23,31 +23,31 @@ if (isset($_SESSION['id'])) {
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-900 text-gray-300">
     <div class="min-h-screen flex items-center justify-center">
-        <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm">
-            <h2 class="text-2xl font-bold text-center mb-6">Login</h2>
+        <div class="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-sm">
+            <h2 class="text-2xl font-bold text-center mb-6 text-gray-100">Login</h2>
             <form id="loginForm">
                 <div class="mb-4">
                     <input type="text" id="email" name="email" placeholder="Username or Email"
-                        class="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+                        class="block w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-300 placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500" />
                     <span id="emailError" class="text-red-500 text-sm mt-1"></span> <!-- Error message container -->
                 </div>
                 <div class="mb-6">
                     <input type="password" id="password" name="password" placeholder="Password"
-                        class="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+                        class="block w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-300 placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500" />
                     <span id="passwordError" class="text-red-500 text-sm mt-1"></span> <!-- Error message container -->
                 </div>
                 <button type="submit"
-                    class="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    class="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     Login
                 </button>
                 <div class="mt-4 text-center">
-                    <a href="forgot_password.php" class="text-sm text-blue-600 hover:underline">Forgot Password?</a>
+                    <a href="forgot_password.php" class="text-sm text-indigo-400 hover:underline">Forgot Password?</a>
                 </div>
                 <div class="mt-2 text-center">
-                    <p class="text-sm text-gray-600">Don't have an account?
-                        <a href="registrasion.php" class="text-blue-600 hover:underline">Register here</a>
+                    <p class="text-sm text-gray-400">Don't have an account?
+                        <a href="registrasion.php" class="text-indigo-400 hover:underline">Register here</a>
                     </p>
                 </div>
             </form>

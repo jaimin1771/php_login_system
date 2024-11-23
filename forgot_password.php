@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -10,35 +12,33 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body>
-    <div class="flex justify-center items-center h-screen bg-gray-100">
-        <div class="bg-white p-8 rounded-lg shadow-lg w-96">
-            <h2 class="text-2xl font-semibold text-center text-gray-700 mb-4">Forgot Your Password?</h2>
-            <p class="text-center text-gray-600 mb-6">Enter your email address to receive a password reset link.</p>
+<body class="bg-gray-900 text-gray-300 font-sans leading-normal tracking-normal flex items-center justify-center min-h-screen">
+    <div class="bg-gray-800 p-8 rounded-lg shadow-lg w-96">
+        <h2 class="text-2xl font-semibold text-center text-gray-100 mb-4">Forgot Your Password?</h2>
+        <p class="text-center text-gray-400 mb-6">Enter your email address to receive a password reset link.</p>
 
-            <!-- Forgot Password Form -->
-            <form id="forgot-password-form" method="POST" action="#" onsubmit="return false;">
-                <!-- Email input -->
-                <div class="mb-4">
-                    <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
-                    <input type="email" id="email" name="email" class="mt-1 px-4 py-2 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your email" required>
-                </div>
+        <!-- Forgot Password Form -->
+        <form id="forgot-password-form" method="POST" action="#" onsubmit="return false;">
+            <!-- Email input -->
+            <div class="mb-4">
+                <label for="email" class="block text-sm font-medium text-gray-100">Email Address</label>
+                <input type="email" id="email" name="email" class="mt-1 px-4 py-2 w-full bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white" placeholder="Enter your email" required>
+            </div>
 
-                <!-- Submit button -->
-                <div class="flex justify-center">
-                    <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Send Reset Link</button>
-                </div>
+            <!-- Submit button -->
+            <div class="flex justify-center">
+                <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">Send Reset Link</button>
+            </div>
 
-                <!-- Link to login -->
-                <div class="mt-4 text-center">
-                    <a href="index.php" class="text-blue-500 hover:text-blue-700">Back to Login</a>
-                </div>
-            </form>
+            <!-- Link to login -->
+            <div class="mt-4 text-center">
+                <a href="index.php" class="text-blue-500 hover:text-blue-700">Back to Login</a>
+            </div>
+        </form>
 
-            <!-- Message container -->
-            <div id="message" class="mt-4 text-center text-sm text-red-500 hidden"></div>
-            <div id="success-message" class="mt-4 text-center text-sm text-green-500 hidden"></div>
-        </div>
+        <!-- Message container -->
+        <div id="message" class="mt-4 text-center text-sm text-red-500 hidden"></div>
+        <div id="success-message" class="mt-4 text-center text-sm text-green-500 hidden"></div>
     </div>
 
     <script>
