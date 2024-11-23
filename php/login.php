@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $emailOrUsername = trim($_POST['email']);
     $password = $_POST['password'];
 
-    $query = "SELECT id, full_name, username, email, password FROM users WHERE username = ? OR email = ?";
+    $query = "SELECT id, role, username, email, password FROM users WHERE username = ? OR email = ?";
     if ($stmt = $conn->prepare($query)) {
         $stmt->bind_param("ss", $emailOrUsername, $emailOrUsername);
         $stmt->execute();
@@ -33,7 +33,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($user = $result->fetch_assoc()) {
             if (password_verify($password, $user['password'])) {
                 $_SESSION['id'] = $user['id'];
-                $_SESSION['full_name'] = $user['full_name'];
+                $_SESSION['username'] = $user['username'];
+                $_SESSION['role'] = $user['role'];
+
                 echo json_encode(['status' => 'success', 'message' => 'Login successful']);
             } else {
                 echo json_encode(['status' => 'error', 'message' => 'Invalid username/email or password']);

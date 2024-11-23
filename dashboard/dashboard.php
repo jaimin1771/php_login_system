@@ -4,38 +4,40 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Debug: Set session variables for testing purposes
-// Uncomment the lines below to test with different roles
-// $_SESSION['role'] = 'admin'; // Set to 'admin', 'user', or leave unset for 'guest'
-// $_SESSION['full_name'] = 'John Doe';
+// Uncomment the line below for debugging (do not use in production)
+// print_r($_SESSION);
 
-// Assign full name or default to "Guest"
-$full_name = isset($_SESSION['full_name']) ? htmlspecialchars($_SESSION['full_name']) : 'Guest';
+// Assign username or default to "Guest"
+$username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Guest';
+// Assign user role or default to "2" (Standard User role)
+$user_role = isset($_SESSION['role']) ? $_SESSION['role'] : '2';
 
-// Assign user role or default to "guest"
-$user_role = isset($_SESSION['role']) ? $_SESSION['role'] : 'guest';
+// Ensure user role is properly set
+if (!in_array($user_role, ['1', '2'])) {
+    $user_role = '2'; // Default to user role if the role is invalid
+}
+// Get the first letter of the username
+$firstLetter = substr($username, 0, 1);
 
 // Define menu items for roles
 $menu_items = [
-    'admin' => [
+    '1' => [ // Admin menu
         'Home' => 'home.php',
         'Recent Activities' => 'recent-activities.php',
         'Upcoming Events' => 'upcoming-events.php',
         'Settings' => 'settings.php',
         'Contact' => 'contact.php',
     ],
-    'user' => [
+    '2' => [ // User menu
         'Home' => 'home.php',
         'Settings' => 'settings.php',
-    ],
-    'guest' => [
-        'Home' => 'home.php',
     ],
 ];
 
 // Get the menu for the current role
-$role_menu = isset($menu_items[$user_role]) ? $menu_items[$user_role] : $menu_items['guest'];
+$role_menu = $menu_items[$user_role];
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -46,11 +48,13 @@ $role_menu = isset($menu_items[$user_role]) ? $menu_items[$user_role] : $menu_it
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-900 font-sans leading-normal tracking-normal text-gray-300 flex h-screen">
+<body class="bg-gray-900 font-sans leading-normal tracking-normal text-gray-300 h-screen flex">
 
     <!-- Sidebar -->
-    <div id="sidebar" class="w-64 bg-gradient-to-b from-indigo-800 via-indigo-700 to-indigo-600 h-screen shadow-lg p-6 hidden md:flex flex-col">
-        <h1 class="text-3xl font-semibold text-white mb-8">Dashboard</h1>
+    <div id="sidebar" class="w-64 bg-gradient-to-b from-indigo-800 via-indigo-700 to-indigo-600 h-screen shadow-lg p-6 flex-none">
+        <h1 class="text-3xl font-semibold text-white mb-8">
+            Dashboard
+        </h1>
         <nav class="space-y-4">
             <?php foreach ($role_menu as $label => $link) : ?>
                 <a href="<?php echo $link; ?>" class="block text-gray-300 hover:text-white hover:bg-indigo-800 rounded-lg px-4 py-2">
@@ -63,21 +67,23 @@ $role_menu = isset($menu_items[$user_role]) ? $menu_items[$user_role] : $menu_it
     <!-- Main Content -->
     <div class="flex-1 flex flex-col w-full">
         <!-- Navbar -->
-        <nav class="bg-gradient-to-r from-indigo-900 to-indigo-800 p-4 text-white shadow-md">
+        <nav class="bg-gradient-to-r from-indigo-900 to-indigo-800 p-4 text-white shadow-md w-full">
             <div class="flex items-center justify-between">
                 <button id="hamburger" class="block md:hidden">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
-                <span class="text-2xl font-semibold">Welcome</span>
+                <span class="text-2xl font-semibold"></span>
 
                 <!-- Profile Dropdown -->
                 <div class="relative group">
                     <button class="flex items-center space-x-2">
-                        <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full border-2 border-white">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center bg-pink-600 text-white font-bold">
+                            <?php echo $firstLetter; ?>
+                        </div>
                         <span class="hidden md:inline font-semibold">
-                            <?php echo $full_name; ?>
+                            <?php echo $username; ?>
                         </span>
                     </button>
                     <!-- Dropdown Menu -->
@@ -91,13 +97,6 @@ $role_menu = isset($menu_items[$user_role]) ? $menu_items[$user_role] : $menu_it
             </div>
         </nav>
 
-        <!-- Page Content -->
-        <div class="p-6 md:p-10 flex-1">
-            <h1 class='text-2xl font-bold'>Welcome, <?php echo $full_name; ?>!</h1>
-            <p>Your role is <strong><?php echo ucfirst($user_role); ?></strong>.</p>
-        </div>
-    </div>
 </body>
 
 </html>
- 
