@@ -67,9 +67,11 @@ include 'dashboard.php';
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-900 min-h-screen text-gray-200">
-  <div class="flex flex-col items-center justify-start min-h-screen w-full py-10">
-    <div class="bg-gray-800 shadow-lg rounded-lg w-full max-w-md p-6 sm:p-10">
+<body class="bg-gray-900 text-gray-200 h-screen">
+
+  <div class="flex items-center justify-start h-full w-full">
+    <div class="bg-gray-800 shadow-lg rounded-lg w-[81%] p-6 sm:p-10 ml-auto my-auto">
+
       <form action="profile-content.php" method="POST" enctype="multipart/form-data" class="space-y-6 w-full">
         <div class="text-center mb-6">
           <div class="relative w-32 h-32 mx-auto mb-4">
@@ -83,11 +85,32 @@ include 'dashboard.php';
           </div>
           <h2 class="text-xl font-semibold">Update Your Profile</h2>
         </div>
-        <input type="text" name="fullName" value="<?= htmlspecialchars($fullName ?? '') ?>" placeholder="Full Name" class="w-full p-3 border border-gray-700 bg-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <input type="text" name="username" value="<?= htmlspecialchars($username ?? '') ?>" placeholder="Username" class="w-full p-3 border border-gray-700 bg-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <input type="email" name="email" value="<?= htmlspecialchars($email ?? '') ?>" placeholder="Email" class="w-full p-3 border border-gray-700 bg-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <input type="tel" name="phone" value="<?= htmlspecialchars($phone ?? '') ?>" placeholder="Phone Number" class="w-full p-3 border border-gray-700 bg-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
 
+        <!-- Full Name Field -->
+        <div class="space-y-2">
+          <label for="fullName" class="block text-sm font-medium text-gray-300">Full Name</label>
+          <input type="text" id="fullName" name="fullName" value="<?= htmlspecialchars($fullName ?? '') ?>" placeholder="Full Name" class="w-full p-3 border border-gray-700 bg-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Username Field -->
+        <div class="space-y-2">
+          <label for="username" class="block text-sm font-medium text-gray-300">Username</label>
+          <input type="text" id="username" name="username" value="<?= htmlspecialchars($username ?? '') ?>" placeholder="Username" class="w-full p-3 border border-gray-700 bg-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Email Field -->
+        <div class="space-y-2">
+          <label for="email" class="block text-sm font-medium text-gray-300">Email</label>
+          <input type="email" id="email" name="email" value="<?= htmlspecialchars($email ?? '') ?>" placeholder="Email" class="w-full p-3 border border-gray-700 bg-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Phone Field -->
+        <div class="space-y-2">
+          <label for="phone" class="block text-sm font-medium text-gray-300">Phone Number</label>
+          <input type="tel" id="phone" name="phone" value="<?= htmlspecialchars($phone ?? '') ?>" placeholder="Phone Number" class="w-full p-3 border border-gray-700 bg-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Submit Button -->
         <button type="submit" class="w-full bg-blue-600 text-white font-semibold p-3 rounded-lg hover:bg-blue-700 transition duration-300">
           Update Profile
         </button>
@@ -96,6 +119,7 @@ include 'dashboard.php';
   </div>
 
   <script>
+    // Preview profile picture when selected
     function previewProfilePicture(event) {
       const file = event.target.files[0];
       if (file) {
@@ -107,6 +131,7 @@ include 'dashboard.php';
       }
     }
   </script>
+
 </body>
 
 </html>

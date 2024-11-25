@@ -48,7 +48,7 @@ $role_menu = $menu_items[$user_role];
 <body class="bg-gray-900 font-sans leading-normal tracking-normal text-gray-300 h-screen flex">
 
     <!-- Sidebar -->
-    <div id="sidebar" class="w-64 bg-gradient-to-b from-indigo-800 via-indigo-700 to-indigo-600 h-screen shadow-lg p-6 flex flex-col justify-between">
+    <div id="sidebar" class="w-64 bg-gradient-to-b from-indigo-800 via-indigo-700 to-indigo-600 h-screen shadow-lg p-6 flex flex-col justify-between fixed ">
         <!-- Sidebar Header -->
         <div>
             <h1 class="text-3xl font-semibold text-white mb-8">
