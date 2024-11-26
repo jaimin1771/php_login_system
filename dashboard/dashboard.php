@@ -81,10 +81,22 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <div class="p-6 text-center text-xl font-semibold border-b border-gray-500">My Dashboard</div>
             <nav class="mt-6 space-y-2 flex flex-col justify-between">
                 <div>
-                    <a href="home.php" class="block px-4 py-2 <?php echo ($current_page == 'home.php') ? 'bg-indigo-500' : 'hover:bg-indigo-500'; ?> rounded-lg transition">Home</a>
+                    
+                    <!-- Admin Only Link -->
+                    <?php if ($role == 1): ?>
+                        <a href="home.php" class="block px-4 py-2 <?php echo ($current_page == 'home.php') ? 'bg-indigo-500' : 'hover:bg-indigo-500'; ?> rounded-lg transition">Home</a>
                     <a href="settings.php" class="block px-4 py-2 <?php echo ($current_page == 'settings.php') ? 'bg-indigo-500' : 'hover:bg-indigo-500'; ?> rounded-lg transition">Settings</a>
-                    <a href="events.php" class="block px-4 py-2 <?php echo ($current_page == 'events.php') ? 'bg-indigo-500' : 'hover:bg-indigo-500'; ?> rounded-lg transition">Events</a>
-                    <a href="user.php" class="block px-4 py-2 <?php echo ($current_page == 'user.php') ? 'bg-indigo-500' : 'hover:bg-indigo-500'; ?> rounded-lg transition">User</a>
+                        <a href="events.php" class="block px-4 py-2 <?php echo ($current_page == 'events.php') ? 'bg-indigo-500' : 'hover:bg-indigo-500'; ?> rounded-lg transition">Event</a>
+                        <a href="user.php" class="block px-4 py-2 <?php echo ($current_page == 'user.php') ? 'bg-indigo-500' : 'hover:bg-indigo-500'; ?> rounded-lg transition">User</a>
+                    <?php endif; ?>
+
+                    <!-- User Only Link -->
+                    <?php if ($role == 2): ?>
+                        <a href="home.php" class="block px-4 py-2 <?php echo ($current_page == 'home.php') ? 'bg-indigo-500' : 'hover:bg-indigo-500'; ?> rounded-lg transition">Home</a>
+                    <a href="settings.php" class="block px-4 py-2 <?php echo ($current_page == 'settings.php') ? 'bg-indigo-500' : 'hover:bg-indigo-500'; ?> rounded-lg transition">Settings</a>
+                        <a href="admin.php" class="block px-4 py-2 <?php echo ($current_page == 'events,php') ? 'bg-indigo-500' : 'hover:bg-indigo-500'; ?> rounded-lg transition">Event</a>
+                    <?php endif; ?>
+
                 </div>
             </nav>
             <div class="mt-auto w-[70%] mx-auto mb-3 text-center flex justify-center">
