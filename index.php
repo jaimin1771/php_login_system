@@ -31,17 +31,17 @@ if (isset($_SESSION['id'])) {
                 <div class="mb-4">
                     <input type="text" id="email" name="email" placeholder="Username or Email"
                         class="block w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-300 placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500" />
-                    <span id="emailError" class="text-red-500 text-sm mt-1"></span> <!-- Error message container -->
                 </div>
                 <div class="mb-6">
                     <input type="password" id="password" name="password" placeholder="Password"
                         class="block w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-300 placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500" />
-                    <span id="passwordError" class="text-red-500 text-sm mt-1"></span> <!-- Error message container -->
+                    <!-- Error message container -->
                 </div>
                 <button type="submit"
                     class="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     Login
                 </button>
+                <span id="passwordError" class="text-red-500 text-sm mt-1"></span>
                 <div class="mt-4 text-center">
                     <a href="forgot_password.php" class="text-sm text-indigo-400 hover:underline">Forgot Password?</a>
                 </div>
@@ -60,7 +60,7 @@ if (isset($_SESSION['id'])) {
             e.preventDefault();
 
             // Clear previous errors
-            $('#emailError').text('');
+            $('#passwordError').text('');
             $('#passwordError').text('');
 
             $.ajax({
@@ -74,13 +74,13 @@ if (isset($_SESSION['id'])) {
                     } else {
                         // Display errors under the input fields
                         if (response.message.includes("Email and password are required")) {
-                            $('#emailError').text(response.message);
+                            $('#passwordError').text(response.message);
                             $('#passwordError').text(response.message);
                         } else if (response.message.includes("Invalid username/email or password")) {
-                            $('#emailError').text(response.message);
+                            $('#passwordError').text(response.message);
                             $('#passwordError').text(response.message);
                         } else if (response.message.includes("User not found")) {
-                            $('#emailError').text(response.message);
+                            $('#passwordError').text(response.message);
                         }
                     }
                 },

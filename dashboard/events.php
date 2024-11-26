@@ -6,5 +6,5 @@ if (!isset($_SESSION['id'])) {
     header("Location: ../index.php");
     exit;
 }
-$page_content = "upcoming-events-content.php";
+$page_content = "contact-content.php";
 include "dashboard.php";

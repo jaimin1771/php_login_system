@@ -2,20 +2,22 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-include "dashboard.php";
+
+if (!isset($_SESSION['username'])) {
+    // Redirect to login page if user is not logged in
+    header("Location: /login.php");
+    exit();
+}
+
+include_once "../php/connection.php"; // Ensure the path is correct
+include_once "dashboard.php";
+
+// Get the username from the session or set a default
+$username = htmlspecialchars($_SESSION['username'] ?? 'Guest');
 ?>
 
-<!-- Page Content -->
-<div class="p-6 md:p-10">
-    <h1 class='text-2xl font-bold'>Welcome, <?php echo $username; ?>!</h1>
-    <strong class="text-indigo-400">
-        <?php echo ($user_role == '1') ? 'Administrator' : 'Standard User'; ?>
-    </strong>.
-    <div>
-        <?php if ($user_role === '1') : ?>
-            <p class="mt-4">You have full access to manage activities, events, and settings.</p>
-        <?php elseif ($user_role === '2') : ?>
-            <p class="mt-4">You have access to basic settings and home functionalities.</p>
-        <?php endif; ?>
-    </div>
-</div>
+<!-- Main Content -->
+<div class="bg-gray-[#f3f4f6] shadow-lg rounded-lg w-[79%] p-6 sm:p-10 ml-auto m-4 bg-white">
+    <h1 class="text-2xl font-bold">Welcome, <?php echo $username; ?>!</h1>
+    <p class="mt-4">Use the sidebar to navigate through the dashboard.</p>
+    </main>
