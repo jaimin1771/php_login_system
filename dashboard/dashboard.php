@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Assign username or default to "Guest"
-$username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Guest';
+htmlspecialchars($_SESSION['username']);
 // Assign user role or default to "2" (Standard User role)
 $user_role = isset($_SESSION['role']) ? $_SESSION['role'] : '2';
 
