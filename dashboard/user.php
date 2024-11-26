@@ -19,23 +19,26 @@ $result = $conn->query($query);
 <body class="bg-gray-100">
 
 <!-- Modal for Create New User -->
-<div id="createUserModal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center hidden">
-    <div class="bg-white rounded-lg shadow-lg p-6 w-96">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">Create New User</h2>
-        <form action="create.php" method="POST">
-            <input type="text" name="username" placeholder="Username" class="w-full p-3 mb-4 border border-gray-300 rounded" required>
-            <input type="text" name="full_name" placeholder="Full Name" class="w-full p-3 mb-4 border border-gray-300 rounded" required>
-            <input type="email" name="email" placeholder="Email" class="w-full p-3 mb-4 border border-gray-300 rounded" required>
-            <input type="text" name="phone" placeholder="Phone" class="w-full p-3 mb-4 border border-gray-300 rounded" required>
-            <select name="role" class="w-full p-3 mb-4 border border-gray-300 rounded">
-                <option value="1">Admin</option>
-                <option value="0">User</option>
-            </select>
-            <button type="submit" class="w-full bg-blue-500 text-white p-3 rounded hover:bg-blue-600">Create User</button>
-        </form>
-        <button onclick="closeCreateUserModal()" class="mt-4 text-red-500">Cancel</button>
+< <div id="createUserModal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Create New User</h2>
+            <form id="createUserForm" action="../php/registrasion.php" method="POST">
+                <input type="text" name="username" placeholder="Username" class="w-full p-3 mb-4 border border-gray-300 rounded" required>
+                <input type="text" name="full_name" placeholder="Full Name" class="w-full p-3 mb-4 border border-gray-300 rounded" required>
+                <input type="email" name="email" placeholder="Email" class="w-full p-3 mb-4 border border-gray-300 rounded" required>
+                <input type="text" name="phone" placeholder="Phone" class="w-full p-3 mb-4 border border-gray-300 rounded" required>
+                <input type="password" name="password" placeholder="Password" class="w-full p-3 mb-4 border border-gray-300 rounded" required>
+                <input type="password" name="confirm_password" placeholder="Confirm Password" class="w-full p-3 mb-4 border border-gray-300 rounded" required>
+                <select name="role" class="w-full p-3 mb-4 border border-gray-300 rounded">
+                    <option value="1">Admin</option>
+                    <option value="0">User</option>
+                </select>
+                <button type="submit" class="w-full bg-blue-500 text-white p-3 rounded hover:bg-blue-600">Create User</button>
+            </form>
+            <button onclick="closeCreateUserModal()" class="mt-4 text-red-500">Cancel</button>
+        </div>
     </div>
-</div>
+
 
 <!-- Modal for Edit User -->
 <div id="editUserModal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center hidden">
@@ -139,6 +142,26 @@ function openDeleteUserModal(id) {
 function closeDeleteUserModal() {
     document.getElementById('deleteUserModal').classList.add('hidden');
 }
+   // Open the modal
+   function openCreateUserModal() {
+            document.getElementById('createUserModal').classList.remove('hidden');
+        }
+
+        // Close the modal
+        function closeCreateUserModal() {
+            document.getElementById('createUserModal').classList.add('hidden');
+        }
+
+        // Validate passwords
+        document.getElementById('createUserForm').addEventListener('submit', function (e) {
+            const password = document.querySelector('input[name="password"]').value;
+            const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
+
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('Passwords do not match!');
+            }
+        });
 </script>
 
 </body>

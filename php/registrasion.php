@@ -1,119 +1,170 @@
 <?php
-ob_start(); // Start output buffering at the top of the file
-include "connection.php";
+include "dashboard.php";
+include_once "../php/connection.php";  // Include your database connection
 
-// Check if username exists (AJAX request)
-if (isset($_POST['check_username'])) {
-    $username = strtolower(trim($_POST['check_username'])); // Convert to lowercase
+// Fetch all users
+$query = "SELECT * FROM users";
+$result = $conn->query($query);
+?>
 
-    $query = "SELECT * FROM users WHERE username = '$username' LIMIT 1";
-    $result = mysqli_query($conn, $query);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users List</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
 
-    if (mysqli_num_rows($result) > 0) {
-        echo json_encode(['status' => 'error', 'message' => 'Username already exists.']);
-    } else {
-        echo json_encode(['status' => 'success', 'message' => 'Username is available.']);
+<!-- Modal for Create New User -->
+<div id="createUserModal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Create New User</h2>
+        <form id="createUserForm" action="../php/registrasion.php" method="POST">
+            <input type="text" name="username" placeholder="Username" class="w-full p-3 mb-4 border border-gray-300 rounded" required>
+            <input type="text" name="full_name" placeholder="Full Name" class="w-full p-3 mb-4 border border-gray-300 rounded" required>
+            <input type="email" name="email" placeholder="Email" class="w-full p-3 mb-4 border border-gray-300 rounded" required>
+
+            <!-- Country Code and Phone Number Input -->
+            <div class="flex space-x-2 mb-4">
+                <select name="country_code" class="w-1/3 p-3 border border-gray-300 rounded" required>
+                    <option value="+1">+1 (US)</option>
+                    <option value="+44">+44 (UK)</option>
+                    <option value="+91">+91 (IN)</option>
+                    <option value="+61">+61 (AU)</option>
+                    <option value="+81">+81 (JP)</option>
+                    <!-- Add more country codes as needed -->
+                </select>
+                <input type="text" name="phone" placeholder="Phone" class="w-2/3 p-3 border border-gray-300 rounded" required>
+            </div>
+
+            <input type="password" name="password" placeholder="Password" class="w-full p-3 mb-4 border border-gray-300 rounded" required>
+            <input type="password" name="confirm_password" placeholder="Confirm Password" class="w-full p-3 mb-4 border border-gray-300 rounded" required>
+            <select name="role" class="w-full p-3 mb-4 border border-gray-300 rounded">
+                <option value="1">Admin</option>
+                <option value="0">User</option>
+            </select>
+            <button type="submit" class="w-full bg-blue-500 text-white p-3 rounded hover:bg-blue-600">Create User</button>
+        </form>
+        <button onclick="closeCreateUserModal()" class="mt-4 text-red-500">Cancel</button>
+    </div>
+</div>
+
+<!-- Modal for Edit User -->
+<div id="editUserModal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Edit User</h2>
+        <form id="editUserForm" method="POST">
+            <input type="hidden" name="id" id="editUserId">
+            <input type="text" name="username" id="editUsername" placeholder="Username" class="w-full p-3 mb-4 border border-gray-300 rounded" required>
+            <input type="text" name="full_name" id="editFullName" placeholder="Full Name" class="w-full p-3 mb-4 border border-gray-300 rounded" required>
+            <input type="email" name="email" id="editEmail" placeholder="Email" class="w-full p-3 mb-4 border border-gray-300 rounded" required>
+
+            <!-- Country Code and Phone Number Input -->
+            <div class="flex space-x-2 mb-4">
+                <select name="country_code" id="editCountryCode" class="w-1/3 p-3 border border-gray-300 rounded" required>
+                    <option value="+1">+1 (US)</option>
+                    <option value="+44">+44 (UK)</option>
+                    <option value="+91">+91 (IN)</option>
+                    <option value="+61">+61 (AU)</option>
+                    <option value="+81">+81 (JP)</option>
+                    <!-- Add more country codes as needed -->
+                </select>
+                <input type="text" name="phone" id="editPhone" placeholder="Phone" class="w-2/3 p-3 border border-gray-300 rounded" required>
+            </div>
+
+            <select name="role" id="editRole" class="w-full p-3 mb-4 border border-gray-300 rounded">
+                <option value="1">Admin</option>
+                <option value="0">User</option>
+            </select>
+            <button type="submit" class="w-full bg-blue-500 text-white p-3 rounded hover:bg-blue-600">Update User</button>
+        </form>
+        <button onclick="closeEditUserModal()" class="mt-4 text-red-500">Cancel</button>
+    </div>
+</div>
+
+<!-- Modal for Delete User -->
+<div id="deleteUserModal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Are you sure you want to delete this user?</h2>
+        <form id="deleteUserForm" method="POST">
+            <input type="hidden" name="id" id="deleteUserId">
+            <button type="submit" class="w-full bg-red-500 text-white p-3 rounded hover:bg-red-600">Delete</button>
+        </form>
+        <button onclick="closeDeleteUserModal()" class="mt-4 text-green-500">Cancel</button>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="bg-gray-[#f3f4f6] shadow-lg rounded-lg w-[79%] p-6 sm:p-10 ml-auto m-4 bg-white">
+    <h1 class="text-3xl font-semibold text-gray-800 mb-6">List of Users</h1>
+    <button onclick="openCreateUserModal()" class="bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 mb-4 inline-block">Create New User</button>
+    <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-lg">
+        <thead>
+            <tr class="bg-gray-200">
+                <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">ID</th>
+                <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Username</th>
+                <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Full Name</th>
+                <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Email</th>
+                <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Phone</th>
+                <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Role</th>
+                <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php while ($user = $result->fetch_assoc()) { ?>
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="px-6 py-3"><?php echo $user['id']; ?></td>
+                    <td class="px-6 py-3"><?php echo $user['username']; ?></td>
+                    <td class="px-6 py-3"><?php echo $user['full_name']; ?></td>
+                    <td class="px-6 py-3"><?php echo $user['email']; ?></td>
+                    <td class="px-6 py-3"><?php echo $user['phone']; ?></td>
+                    <td class="px-6 py-3"><?php echo $user['role'] == 1 ? 'Admin' : 'User'; ?></td>
+                    <td class="px-6 py-3">
+                        <button onclick="openEditUserModal(<?php echo $user['id']; ?>, '<?php echo $user['username']; ?>', '<?php echo $user['full_name']; ?>', '<?php echo $user['email']; ?>', '<?php echo $user['phone']; ?>', <?php echo $user['role']; ?>, '<?php echo $user['country_code']; ?>')" class="bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600">Edit</button>
+                        <button onclick="openDeleteUserModal(<?php echo $user['id']; ?>)" class="bg-red-500 text-white p-2 rounded hover:bg-red-600">Delete</button>
+                    </td>
+                </tr>
+            <?php } ?>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Modal functions
+    function openCreateUserModal() {
+        document.getElementById('createUserModal').classList.remove('hidden');
     }
-    exit;
-}
 
-// Registration logic
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['full_name'])) {
-    $full_name = $_POST['full_name'];
-    $username = strtolower(trim($_POST['username'])); // Convert username to lowercase
-    $email = trim($_POST['email']);
-    $phone = $_POST['phone'];
-    $country_code = $_POST['country_code']; // Country code will be stored in DB
-    $password = $_POST['password'];
-    $confirm_password = $_POST['confirm_password'];
-
-    $errors = [];
-
-    // Validate Full Name (no special characters allowed)
-    if (empty($full_name)) {
-        $errors['full_name'] = 'Full Name is required.';
-    } elseif (!preg_match("/^[a-zA-Z ]*$/", $full_name)) {
-        $errors['full_name'] = 'Full Name should not contain special characters.';
+    function closeCreateUserModal() {
+        document.getElementById('createUserModal').classList.add('hidden');
     }
 
-    // Validate Username (no spaces or capital letters)
-    if (empty($username)) {
-        $errors['username'] = 'Username is required.';
-    } elseif (preg_match('/\s/', $username)) {
-        $errors['username'] = 'Username should not contain spaces.';
-    } elseif (preg_match('/[A-Z]/', $username)) {
-        $errors['username'] = 'Username should not contain capital letters.';
-    } else {
-        $query = "SELECT * FROM users WHERE username = '$username' LIMIT 1";
-        $result = mysqli_query($conn, $query);
-        if (mysqli_num_rows($result) > 0) {
-            $errors['username'] = 'Username already exists.';
-        }
+    function openEditUserModal(id, username, fullName, email, phone, role, countryCode) {
+        document.getElementById('editUserId').value = id;
+        document.getElementById('editUsername').value = username;
+        document.getElementById('editFullName').value = fullName;
+        document.getElementById('editEmail').value = email;
+        document.getElementById('editPhone').value = phone;
+        document.getElementById('editCountryCode').value = countryCode;
+        document.getElementById('editRole').value = role;
+        document.getElementById('editUserModal').classList.remove('hidden');
     }
 
-    // Validate Email
-    if (empty($email)) {
-        $errors['email'] = 'Email is required.';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = 'Invalid email format.';
-    } else {
-        $query = "SELECT * FROM users WHERE email = '$email' LIMIT 1";
-        $result = mysqli_query($conn, $query);
-        if (mysqli_num_rows($result) > 0) {
-            $errors['email'] = 'Email already exists.';
-        }
+    function closeEditUserModal() {
+        document.getElementById('editUserModal').classList.add('hidden');
     }
 
-    // Validate Phone Number (only numbers, no spaces)
-    if (empty($phone)) {
-        $errors['phone'] = 'Phone number is required.';
-    } elseif (!preg_match("/^[0-9]*$/", $phone)) {
-        $errors['phone'] = 'Phone number should only contain numbers, no spaces or characters.';
+    function openDeleteUserModal(id) {
+        document.getElementById('deleteUserId').value = id;
+        document.getElementById('deleteUserModal').classList.remove('hidden');
     }
 
-    // Validate Password
-    if (empty($password)) {
-        $errors['password'] = 'Password is required.';
-    } elseif (strlen($password) < 6) {
-        $errors['password'] = 'Password must be at least 6 characters long, contain at least 1 uppercase letter, 1 number, and 1 special character.';
-    } elseif (!preg_match("/[A-Z]/", $password)) {
-        $errors['password'] = 'Password must contain at least 1 uppercase letter.';
-    } elseif (!preg_match("/[0-9]/", $password)) {
-        $errors['password'] = 'Password must contain at least 1 number.';
-    } elseif (!preg_match("/[\W_]/", $password)) {
-        $errors['password'] = 'Password must contain at least 1 special character.';
+    function closeDeleteUserModal() {
+        document.getElementById('deleteUserModal').classList.add('hidden');
     }
+</script>
 
-    // Validate Confirm Password
-    if (empty($confirm_password)) {
-        $errors['confirm_password'] = 'Confirm Password is required.';
-    } elseif ($password !== $confirm_password) {
-        $errors['confirm_password'] = 'Passwords do not match.';
-    }
-
-    // If there are validation errors, return them
-    if (count($errors) > 0) {
-        echo json_encode(['status' => 'error', 'errors' => $errors]);
-        exit;
-    }
-
-    // Encrypt the password
-    $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-
-    // Concatenate country code and phone number
-    $full_phone = $country_code . $phone; // Country code and phone number combined
-
-    // Insert the new user into the database (now including the concatenated phone number)
-    $insert = "INSERT INTO users (full_name, username, email, phone, password) 
-               VALUES ('$full_name', '$username', '$email', '$full_phone', '$hashed_password')";
-
-    if (mysqli_query($conn, $insert)) {
-        // Return success response to be handled by JavaScript
-        echo json_encode(['status' => 'success', 'message' => 'Registration successful.']);
-    } else {
-        echo json_encode(['status' => 'error', 'message' => 'Registration failed. Please try again.']);
-    }
-    exit;
-}
-
-ob_end_flush(); // Send the output at the end of the file
+</body>
+</html>
