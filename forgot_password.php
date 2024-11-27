@@ -58,17 +58,17 @@
 
                 // AJAX request
                 $.ajax({
-                    url: '/forgot-password', // Endpoint for password reset logic (adjust URL as needed)
+                    url: '/php/forgot_password.php', // Update with actual path
                     type: 'POST',
                     data: {
                         email: email
                     },
                     success: function(response) {
                         if (response.success) {
-                            $('#success-message').text('A password reset link has been sent to your email.').removeClass('hidden');
-                            $('#message').addClass('hidden'); // Hide error message if successful
+                            $('#success-message').text(response.message).removeClass('hidden');
+                            $('#message').addClass('hidden');
                         } else {
-                            $('#message').text('There was an error processing your request. Please try again.').removeClass('hidden');
+                            $('#message').text(response.message).removeClass('hidden');
                         }
                     },
                     error: function() {

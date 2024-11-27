@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($conn->query($sql) === TRUE) {
         // Redirect to the users page
-        header("Location: dashboard/user.php");
+        header("Location: ../dashboard/user.php");
         exit; // Ensure no further code is executed
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
@@ -35,4 +35,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Close connection
 $conn->close();
-?>
